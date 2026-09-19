@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Google Search Ranking & Discoverability Capstone</title>
+<style>
+body{font-family:Arial,sans-serif;line-height:1.6;margin:0;background:#f5f7fb;color:#20242a}
+main{max-width:950px;margin:auto;background:#fff;padding:40px}
+h1{line-height:1.2} h2{margin-top:35px;border-bottom:2px solid #ddd;padding-bottom:6px}
+table{width:100%;border-collapse:collapse;margin:15px 0}th,td{border:1px solid #ddd;padding:9px;text-align:left}th{background:#f0f3f7}
+.card{background:#f6f8fb;border:1px solid #e0e4ea;border-radius:10px;padding:18px}
+.bar{height:20px;background:#e2e6ec;border-radius:4px}.fill{height:100%;background:#506784}
+</style>
+</head>
+<body><main>
+<h1>Google Search Ranking & Discoverability Capstone</h1>
+<p><strong>Content Refresh & Opportunity Scoring</strong> — FlyRank ML Internship</p>
+
+<div class="card">
+<h2>Abstract</h2>
+<p>This capstone asks which anonymized content should be prioritized for refresh and review using visibility, engagement, freshness, and decline-risk signals. The workflow combines an interpretable CTR-and-freshness baseline with machine-learning models evaluated using a client-holdout split. On the measured validation set, Logistic Regression achieved an F1-score of 0.7258, Decision Tree 0.8314, and Random Forest 0.8239. The Decision Tree had the highest measured F1-score among the three tested models, while the workflow also produced ranked content-prioritization output for human review. These results are directional decision support and do not establish that refreshing content causes higher rankings, clicks, or traffic.</p>
+</div>
+
+<h2>1. Introduction / Problem Statement</h2>
+<p>Content teams may have many pages that could be reviewed but limited time to inspect them manually. This project creates a repeatable analysis to prioritize anonymized content for refresh or further investigation using measurable signals.</p>
+<p>The decision supported is which content should be reviewed first. The output is a prioritization aid, not an automatic publishing or deletion system.</p>
+
+<h2>2. Data</h2>
+<p>The analysis uses the anonymized FlyRank internship content-refresh dataset. It contains <strong>30,000 records and 44 columns</strong>, including visibility, clicks, sessions, CTR, engagement, content age, freshness, position, content type, and search-intent features.</p>
+<p>Content identifiers, client identifiers, trend direction, trend percentage, and the target label were excluded from the model feature set. No client names, domains, private queries, credentials, or raw private data are exposed.</p>
+
+<h2>3. Methodology</h2>
+<h3>Baseline</h3>
+<p>The baseline uses CTR and content freshness as practical ranking signals. Higher CTR and fresher content receive a higher refresh-priority score.</p>
+<h3>Models</h3>
+<p>The target variable is <code>is_declining_label</code>. Logistic Regression, Decision Tree, and Random Forest were compared.</p>
+<h3>Validation</h3>
+<p>A client-based holdout design was used: 25 training clients and 7 test clients, with <strong>zero client overlap</strong>. Training contained 26,581 rows and testing contained 3,419 rows.</p>
+<h3>Leakage audit</h3>
+<p>Content ID, client ID, trend direction, trend percentage, and the target label were excluded from model features, and a separate audit checked that these fields were not present in the feature set.</p>
+
+<h2>4. Results</h2>
+<table><tr><th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th></tr>
+<tr><td>Logistic Regression</td><td>0.6832</td><td>0.6640</td><td>0.8001</td><td>0.7258</td></tr>
+<tr><td>Decision Tree</td><td>0.7918</td><td>0.7217</td><td>0.9805</td><td><strong>0.8314</strong></td></tr>
+<tr><td>Random Forest</td><td>0.7795</td><td>0.7081</td><td>0.9849</td><td>0.8239</td></tr></table>
+<h3>F1 comparison</h3>
+<p>Logistic Regression — 0.7258</p><div class="bar"><div class="fill" style="width:72.58%"></div></div>
+<p>Decision Tree — 0.8314</p><div class="bar"><div class="fill" style="width:83.14%"></div></div>
+<p>Random Forest — 0.8239</p><div class="bar"><div class="fill" style="width:82.39%"></div></div>
+<p>Confusion matrix: <code>[[951, 677], [35, 1756]]</code>, corresponding to 951 true negatives, 677 false positives, 35 false negatives, and 1,756 true positives.</p>
+
+<h2>5. Limitations & Honest Framing</h2>
+<ul><li>Results depend on the available anonymized dataset and validation design.</li><li>Performance may change for new data, clients, or search conditions.</li><li>The analysis identifies associations and supports prioritization; it does not prove causal effects.</li><li>The project does not prove that refreshing content will increase Google rankings, clicks, or traffic.</li><li>Human review is required before publishing, deletion, or major strategy decisions.</li></ul>
+
+<h2>6. Ranked Recommendations</h2>
+<p>The final workflow produces a ranked content-review queue using refresh-priority signals and model-based decline-risk information. Higher-ranked items should be reviewed first.</p>
+<table><tr><th>Priority</th><th>Review focus</th><th>Suggested action</th></tr>
+<tr><td>1</td><td>Strong review opportunity</td><td>Review freshness, CTR, engagement and current relevance.</td></tr>
+<tr><td>2</td><td>Decline-risk signal</td><td>Inspect recent performance and determine whether a refresh is justified.</td></tr>
+<tr><td>3</td><td>Low CTR / visible-page opportunity</td><td>Review title, metadata and content alignment.</td></tr>
+<tr><td>4</td><td>Low engagement</td><td>Inspect content usefulness and engagement signals.</td></tr>
+<tr><td>5</td><td>Stale content</td><td>Check whether information is outdated and whether an update is appropriate.</td></tr></table>
+<p>These recommendations are human-review decision support and should not be fully automated.</p>
+
+<h2>7. Reproducibility</h2>
+<p>The workflow was developed in Python using pandas, scikit-learn, and Matplotlib in Google Colab. The repository contains the internship notebooks and capstone notebook under <code>work/notebooks/</code>.</p>
+<p>Workflow: data loading → feature exclusions → baseline → model comparison → client-holdout validation → leakage audit → ranked recommendations.</p>
+
+<h2>8. Acknowledgements & Data Credit</h2>
+<p>This capstone was completed as part of the FlyRank ML Internship using the anonymized internship dataset and learning resources provided by FlyRank.</p>
+<p>Data credit: <a href="https://flyrank.ai" target="_blank">FlyRank</a>.</p>
+
+<h2>9. ML-12 Closing Summary</h2>
+<h3>5-minute demo outline</h3>
+<ol><li>Introduce the content-prioritization problem.</li><li>Describe the anonymized dataset and key signals.</li><li>Explain the baseline and client-holdout validation.</li><li>Show model comparison and measured F1 results.</li><li>Show the ranked recommendation workflow.</li><li>Explain limitations and human-review requirements.</li><li>Show the repository and reproducibility workflow.</li></ol>
+<h3>Social-post cut</h3>
+<p>Completed my FlyRank ML capstone on content refresh and opportunity scoring. I used an anonymized dataset, client-holdout validation, and multiple machine-learning models to identify content that may need review. The workflow provides ranked, human-reviewed decision support while keeping the analysis careful about leakage, limitations, and causal claims.</p>
+<h3>Employer-facing summary</h3>
+<p>I built an end-to-end machine-learning workflow for content refresh prioritization using an anonymized search dataset. I worked through data preparation, baseline scoring, model comparison, client-based validation, leakage auditing, and ranked recommendations. The project demonstrates practical skills in Python, pandas, scikit-learn, model evaluation, responsible ML framing, and decision-support recommendations.</p>
+</main></body></html>
